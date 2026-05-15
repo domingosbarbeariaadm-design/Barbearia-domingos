@@ -682,4 +682,77 @@ document.addEventListener('click',function(e){
   document.addEventListener('DOMContentLoaded',()=>setTimeout(limparHorariosFantasmasRecorrencia,300));
 })();
 
+
+
+/* MELHORIAS WHATSAPP + AGENDAMENTO + CONTAS A RECEBER */
+(function(){
+  function dbase(){try{return window.db||db}catch(e){return null}}
+  function saveDB(){try{if(typeof save==='function')save()}catch(e){}}
+  function dayOffsetISO(n){const d=new Date(today()+'T00:00:00');d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+  function ensureMessages(){
+    const d=dbase(); if(!d||!d.biz)return;
+    d.biz.messages=d.biz.messages||{};
+    const keep={
+      confirmacao:d.biz.messages.confirmacao||d.biz.messages.confirm||'Olá {cliente}, confirmando seu horário: {data} às {hora}. Serviço: {servicos}. Domingos Barbearia.',
+      lembrete:d.biz.messages.lembrete||d.biz.messages.reminder||'Olá {cliente}, lembrete do seu horário em {data} às {hora}. Serviço: {servicos}.',
+      reagendamento:d.biz.messages.reagendamento||'Olá {cliente}, precisamos reagendar seu horário de {data} às {hora}. Serviço: {servicos}.',
+      cancelamento:d.biz.messages.cancelamento||'Olá {cliente}, seu horário de {data} às {hora} foi cancelado. Serviço: {servicos}.',
+      cobranca:d.biz.messages.cobranca||d.biz.messages.charge||'Olá {cliente}, consta em aberto {valor}. Pendências: {historico}',
+      aniversario:d.biz.messages.aniversario||d.biz.messages.birthday||'Olá {cliente}, feliz aniversário! 🎉',
+      plano_vencendo:d.biz.messages.plano_vencendo||'Olá {cliente}, seu plano está próximo de vencer. Procure a Domingos Barbearia.'
+    };
+    d.biz.messages={...d.biz.messages,...keep};
+  }
+  window.fillWhatsTemplate=function(t,a){return fillMsg(t,{cliente:_whatsName(a),data:brDate(a.date),hora:a.time,servicos:_serviceText(a)})}
+  window.copyText=function(txt){navigator.clipboard?.writeText(txt);alert('Mensagem copiada.');}
+  window.openWaWithText=function(phone,msg){openWhats(phone,msg)}
+  window.renderWhatsAppList=function(){
+    const d=dbase(); const box=document.getElementById('whatsQuickList'); const models=document.getElementById('whatsModels'); if(!d||!box||!models)return;
+    ensureMessages();
+    const start=today(),end=dayOffsetISO(1);
+    const list=(d.appointments||[]).filter(a=>a.date>=start&&a.date<=end&&(!a.status||!['cancelado','faltou','finalizado'].includes(String(a.status).toLowerCase()))).sort((a,b)=>(String(a.time||'').localeCompare(String(b.time||''))||String(a.date).localeCompare(String(b.date))));
+    box.innerHTML=list.map(a=>{const sent=_isWaSent(a,'confirmacao');return `<div class="list vertical ${sent?'locked':''}"><div><b>${brDate(a.date)} • ${a.time} • ${_agendaName(a)}</b><div class="small">${_serviceText(a)} ${sent?'• ✅ Mensagem enviada':'• ⏳ Pendente'}</div></div><div class="itemActions"><button class="btn" onclick="openWhatsappAppointment('${a.id}')">Abrir WhatsApp</button><button class="btn light" onclick="copyText(fillWhatsTemplate(db.biz.messages.confirmacao,db.appointments.find(x=>x.id==='${a.id}')))">Copiar mensagem</button></div></div>`}).join('')||'<p class="small">Nenhum atendimento hoje ou amanhã.</p>';
+    const labels=[['confirmacao','Confirmação'],['lembrete','Lembrete'],['reagendamento','Reagendamento'],['cancelamento','Cancelamento'],['cobranca','Cobrança'],['aniversario','Aniversário'],['plano_vencendo','Plano vencendo']];
+    models.innerHTML=labels.map(([k,t])=>`<div class="card" style="background:#101010"><b>${t}</b><p class="small">${d.biz.messages[k]}</p><div class="itemActions"><button class="btn light" onclick="copyText(db.biz.messages['${k}'])">Copiar mensagem</button><button class="btn" onclick="openWaWithText('',db.biz.messages['${k}'])">Abrir WhatsApp</button></div></div>`).join('');
+  }
+
+  window.receiveByClient=function(clientId){
+    const d=dbase(); const list=(d.receivables||[]).filter(r=>!r.paid&&String(r.clientId||'')===String(clientId));
+    if(!list.length)return; const mode=prompt('Digite: total ou parcial','total'); if(!mode)return;
+    if(mode.toLowerCase().startsWith('t')){list.forEach(r=>markPaid(r.id)); return;}
+    const v=num(prompt('Valor parcial total recebido para este cliente:','0')); if(v<=0)return;
+    let saldo=v; list.forEach(r=>{if(saldo<=0)return; const b=Number(r.balance!==undefined?r.balance:r.value||0); const pay=Math.min(b,saldo); if(pay>0){addReceivablePayment(r,pay,'Baixa parcial do cliente'); saldo-=pay;}}); saveDB();
+  }
+
+  window.renderReceivables=function(){
+    let q=val('receberSearch'); let open=(db.receivables||[]).filter(r=>!r.paid&&recInFilter(r)&&matchReceivable(r,q)); let groups={};
+    open.forEach(r=>{let k=r.clientId||r.client||'sem_cliente'; if(!groups[k])groups[k]={clientId:r.clientId,client:r.client||'Sem cliente',items:[]}; groups[k].items.push(r)});
+    $('receberList').innerHTML=Object.values(groups).map(g=>{let total=g.items.reduce((s,r)=>s+Number(r.balance!==undefined?r.balance:r.value||0),0); return `<div class="card"><div class="list" onclick="this.nextElementSibling.classList.toggle('hidden')" style="cursor:pointer"><div><b>${g.client}</b><div class="small">Em aberto: ${money(total)} • ${g.items.length} lançamento(s)</div></div><button class="btn green" onclick="event.stopPropagation();receiveByClient('${g.clientId||''}')">Dar baixa</button></div><div class="hidden">${g.items.map(r=>`<div class="card" style="margin-top:8px;background:#101010">${receivableHistoryHtml(r)}</div>`).join('')}</div></div>`}).join('')||'<p class="small">Nada em aberto.</p>';
+  }
+
+  const oldSaveAg=window.saveAg;
+  if(typeof oldSaveAg==='function'&&!oldSaveAg._waConfirm){
+    window.saveAg=function(i){
+      oldSaveAg.apply(this,arguments);
+      if(i) return;
+      const d=dbase(); const a=(d.appointments||[]).slice().sort((x,y)=>String(y.id).localeCompare(String(x.id)))[0]; if(!a)return;
+      const msg=`Olá ${_whatsName(a)}, seu horário ficou agendado para ${brDate(a.date)} às ${a.time}.
+Serviço: ${_serviceText(a)}.
+Domingos Barbearia.`;
+      const choice=prompt('Enviar mensagem de confirmação pelo WhatsApp?
+Digite: enviar, copiar ou nao','enviar');
+      if(!choice||choice.toLowerCase().startsWith('nao'))return;
+      if(choice.toLowerCase().startsWith('cop')){copyText(msg);return;}
+      openWhats(a.phone,msg); _markWaSent(a,'confirmacao');
+    }
+    window.saveAg._waConfirm=true;
+  }
+
+  const oldRender=window.render;
+  if(typeof oldRender==='function'&&!oldRender._extraMods){
+    window.render=function(){ const r=oldRender.apply(this,arguments); setTimeout(()=>{try{renderWhatsAppList()}catch(e){}},0); return r; }
+    window.render._extraMods=true;
+  }
+})();
+
 </script></body></html>
