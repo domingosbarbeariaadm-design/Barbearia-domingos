@@ -752,9 +752,29 @@ document.addEventListener('click',function(e){
   }
 
   window.renderReceivables=function(){
-    let q=val('receberSearch'); let open=(db.receivables||[]).filter(r=>recInFilter(r)&&matchReceivable(r,q)); let groups={};
-    open.forEach(r=>{let k=r.clientId||r.client||'sem_cliente'; if(!groups[k])groups[k]={clientId:r.clientId,client:r.client||'Sem cliente',items:[]}; groups[k].items.push(r)});
-    $('receberList').innerHTML=Object.values(groups).map(g=>{let total=g.items.reduce((s,r)=>s+Number(r.balance!==undefined?r.balance:r.value||0),0); return `<div class="card"><div class="list" onclick="this.nextElementSibling.classList.toggle('hidden')" style="cursor:pointer"><div><b>${g.client}</b><div class="small">Em aberto: ${money(total)} • ${g.items.length} lançamento(s)</div></div><button class="btn green" onclick="event.stopPropagation();receiveByClient('${g.clientId||''}')">Dar baixa</button></div><div class="hidden">${g.items.map(r=>`<div class="card" style="margin-top:8px;background:#101010">${receivableHistoryHtml(r)}</div>`).join('')}</div></div>`}).join('')||'<p class="small">Nada em aberto.</p>';
+    const q=val('receberSearch');
+    const all=(db.receivables||[]).filter(r=>recInFilter(r)&&matchReceivable(r,q));
+    const groups={};
+    all.forEach(r=>{const k=r.clientId||r.client||'sem_cliente'; if(!groups[k])groups[k]={clientId:r.clientId,client:r.client||'Sem cliente',items:[]}; groups[k].items.push(r)});
+
+    const matchedClients=(db.clients||[]).filter(c=>!q||txt([c.name,c.nickname,c.phone,c.birth,c.obs,c.apelido,c.telefone].join(' ')).includes(q));
+    matchedClients.forEach(c=>{const k=c.id; if(!groups[k])groups[k]={clientId:c.id,client:c.name||'Sem nome',items:[],clientObj:c}; if(!groups[k].clientObj)groups[k].clientObj=c;});
+
+    const clientLastService=(clientId)=>{
+      const fromAppointments=(db.appointments||[]).filter(a=>String(a.clientId||'')===String(clientId)).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||''))||String(b.time||'').localeCompare(String(a.time||'')))[0];
+      if(fromAppointments)return `${brDate(fromAppointments.date)} ${fromAppointments.time||''} • ${fromAppointments.service||'Atendimento'}`;
+      return 'Nenhum atendimento registrado';
+    };
+
+    $('receberList').innerHTML=Object.values(groups).map(g=>{
+      const total=g.items.reduce((s,r)=>s+Number(r.balance!==undefined?r.balance:r.value||0),0);
+      const paidTotal=g.items.reduce((s,r)=>s+Number(r.paidValue||0),0);
+      const hasOpen=g.items.some(r=>!r.paid&&Number(r.balance!==undefined?r.balance:r.value||0)>0);
+      const c=g.clientObj || (db.clients||[]).find(x=>String(x.id)===String(g.clientId));
+      const profile=c?`<div class='small'>${c.nickname?('Apelido: '+c.nickname+' • '):''}${c.phone?('Telefone: '+c.phone+' • '):''}${c.birth?('Nascimento: '+brDate(c.birth)):'Nascimento: -'}<br>Obs: ${c.obs||'-'}<br>Último atendimento: ${clientLastService(c.id)}</div>`:'';
+      const statement=g.items.length?g.items.map(r=>`<div class="card" style="margin-top:8px;background:#101010">${receivableHistoryHtml(r)}</div>`).join(''):'<p class="small" style="margin:10px 0 0">Cliente sem histórico financeiro.</p>';
+      return `<div class="card"><div class="list" onclick="this.nextElementSibling.classList.toggle('hidden')" style="cursor:pointer"><div><b>${g.client}</b><div class="small">Em aberto: ${money(total)} • Recebido: ${money(paidTotal)} • Lançamentos: ${g.items.length}</div>${profile}</div>${hasOpen?`<button class="btn green" onclick="event.stopPropagation();receiveByClient('${g.clientId||''}')">Dar baixa</button>`:''}</div><div class="hidden">${statement}</div></div>`;
+    }).join('')||'<p class="small">Nenhum cliente encontrado.</p>';
   }
 
   function showWaConfirmDialog(a,msg){
