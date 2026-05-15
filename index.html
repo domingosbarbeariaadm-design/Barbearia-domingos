@@ -458,6 +458,9 @@ function _appointmentDisplayName(a){ return _agendaName(a); }
 function _waKey(a,type='confirmacao'){ return type+'_'+a.id; }
 function _isWaSent(a,type='confirmacao'){ const data=_db(); data.whatsappSent=data.whatsappSent||[]; return data.whatsappSent.some(x=>x.key===_waKey(a,type)); }
 function _markWaSent(a,type='confirmacao'){ const data=_db(); data.whatsappSent=data.whatsappSent||[]; const key=_waKey(a,type); if(!data.whatsappSent.some(x=>x.key===key)) data.whatsappSent.push({key,appointmentId:a.id,type,date:_today(),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}); _save(); renderWhatsAppList(); }
+function _waStatusKey(a,type='confirmacao'){ return type+'_'+a.id; }
+function _waStatus(a,type='confirmacao'){ const data=_db(); data.whatsappStatus=data.whatsappStatus||{}; return data.whatsappStatus[_waStatusKey(a,type)]||'pendente'; }
+function _setWaStatus(a,status,type='confirmacao'){ const data=_db(); data.whatsappStatus=data.whatsappStatus||{}; data.whatsappStatus[_waStatusKey(a,type)]=status||'pendente'; _save(); renderWhatsAppList(); }
 function _unmarkWaSent(id,type='confirmacao'){ const data=_db(); const a=data.appointments.find(x=>String(x.id)===String(id)); if(!a)return; const key=_waKey(a,type); data.whatsappSent=(data.whatsappSent||[]).filter(x=>x.key!==key); _save(); renderWhatsAppList(); }
 function _waText(a){
   return `Olá ${_whatsName(a)}, confirmando seu horário na Domingos Barbearia:
@@ -474,6 +477,13 @@ function openWhatsappAppointment(id){
   const url=(phone?`https://wa.me/55${phone}?text=`:`https://wa.me/?text=`)+encodeURIComponent(_waText(a));
   window.open(url,'_blank');
   _markWaSent(a,'confirmacao');
+  _setWaStatus(a,'enviada','confirmacao');
+}
+function copyWhatsappAppointment(id){
+  const data=_db(); const a=data.appointments.find(x=>String(x.id)===String(id)); if(!a)return;
+  navigator.clipboard?.writeText(_waText(a));
+  _setWaStatus(a,'copiada','confirmacao');
+  alert('Mensagem copiada.');
 }
 function setWaDays(days){
   let d=new Date(_today()+'T00:00:00'), e=new Date(_today()+'T00:00:00');
@@ -496,11 +506,13 @@ function renderWhatsAppList(){
     <div class="card"><h3>${_brDate(date)}</h3>
       ${dates[date].sort((a,b)=>_waDateTimeKey(a).localeCompare(_waDateTimeKey(b))).map(a=>{
         const sent=_isWaSent(a,'confirmacao');
+        const status=_waStatus(a,'confirmacao');
+        const statusLabel=status==='enviada'?'Enviada':status==='copiada'?'Copiada':'Pendente';
         return `<div class="list ${sent?'locked':''}">
           <b>${a.time||''} • ${_agendaName(a)}</b>
-          <span>${_serviceText(a)} • ${sent?'✅ Enviado':'Pendente'}<br>
+          <span>${_serviceText(a)} • ${statusLabel}<br>
             <button class="btn" onclick="openWhatsappAppointment('${a.id}')">${sent?'Reenviar WhatsApp':'Enviar WhatsApp'}</button>
-            ${sent?`<button class="btn light" onclick="_unmarkWaSent('${a.id}','confirmacao')">Desmarcar enviado</button>`:''}
+            <button class="btn light" onclick="copyWhatsappAppointment('${a.id}')">Copiar mensagem</button>
           </span>
         </div>`;
       }).join('')}
@@ -711,7 +723,7 @@ document.addEventListener('click',function(e){
     ensureMessages();
     const start=today(),end=dayOffsetISO(1);
     const list=(d.appointments||[]).filter(a=>a.date>=start&&a.date<=end&&(!a.status||!['cancelado','faltou','finalizado'].includes(String(a.status).toLowerCase()))).sort((a,b)=>(String(a.time||'').localeCompare(String(b.time||''))||String(a.date).localeCompare(String(b.date))));
-    box.innerHTML=list.map(a=>{const sent=_isWaSent(a,'confirmacao');return `<div class="list vertical ${sent?'locked':''}"><div><b>${brDate(a.date)} • ${a.time} • ${_agendaName(a)}</b><div class="small">${_serviceText(a)} ${sent?'• ✅ Mensagem enviada':'• ⏳ Pendente'}</div></div><div class="itemActions"><button class="btn" onclick="openWhatsappAppointment('${a.id}')">Abrir WhatsApp</button><button class="btn light" onclick="copyText(fillWhatsTemplate(db.biz.messages.confirmacao,db.appointments.find(x=>x.id==='${a.id}')))">Copiar mensagem</button></div></div>`}).join('')||'<p class="small">Nenhum atendimento hoje ou amanhã.</p>';
+    box.innerHTML=list.map(a=>{const sent=_isWaSent(a,'confirmacao');const status=_waStatus(a,'confirmacao');const statusLabel=status==='enviada'?'Enviada':status==='copiada'?'Copiada':'Pendente';return `<div class="list vertical ${sent?'locked':''}"><div><b>${brDate(a.date)} • ${a.time} • ${_agendaName(a)}</b><div class="small">${_serviceText(a)} • ${statusLabel}</div></div><div class="itemActions"><button class="btn" onclick="openWhatsappAppointment('${a.id}')">Enviar WhatsApp</button><button class="btn light" onclick="copyWhatsappAppointment('${a.id}')">Copiar mensagem</button></div></div>`}).join('')||'<p class="small">Nenhum atendimento hoje ou amanhã.</p>';
     const labels=[['confirmacao','Confirmação'],['lembrete','Lembrete'],['reagendamento','Reagendamento'],['cancelamento','Cancelamento'],['cobranca','Cobrança'],['aniversario','Aniversário'],['plano_vencendo','Plano vencendo']];
     models.innerHTML=labels.map(([k,t])=>`<div class="card" style="background:#101010"><b>${t}</b><p class="small">${d.biz.messages[k]}</p><div class="itemActions"><button class="btn light" onclick="copyText(db.biz.messages['${k}'])">Copiar mensagem</button><button class="btn" onclick="openWaWithText('',db.biz.messages['${k}'])">Abrir WhatsApp</button></div></div>`).join('');
   }
@@ -730,6 +742,18 @@ document.addEventListener('click',function(e){
     $('receberList').innerHTML=Object.values(groups).map(g=>{let total=g.items.reduce((s,r)=>s+Number(r.balance!==undefined?r.balance:r.value||0),0); return `<div class="card"><div class="list" onclick="this.nextElementSibling.classList.toggle('hidden')" style="cursor:pointer"><div><b>${g.client}</b><div class="small">Em aberto: ${money(total)} • ${g.items.length} lançamento(s)</div></div><button class="btn green" onclick="event.stopPropagation();receiveByClient('${g.clientId||''}')">Dar baixa</button></div><div class="hidden">${g.items.map(r=>`<div class="card" style="margin-top:8px;background:#101010">${receivableHistoryHtml(r)}</div>`).join('')}</div></div>`}).join('')||'<p class="small">Nada em aberto.</p>';
   }
 
+  function showWaConfirmDialog(a,msg){
+    const old=document.getElementById('waConfirmOverlay'); if(old)old.remove();
+    const overlay=document.createElement('div');
+    overlay.id='waConfirmOverlay';
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.65);display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;';
+    overlay.innerHTML=`<div class="card" style="max-width:560px;width:100%"><h3>Enviar mensagem de confirmação pelo WhatsApp?</h3><p class="small">${msg.replace(/\n/g,'<br>')}</p><div class="itemActions"><button class="btn" id="waSendBtn">Enviar WhatsApp</button><button class="btn light" id="waCopyBtn">Copiar mensagem</button><button class="btn light" id="waLaterBtn">Agora não</button></div></div>`;
+    document.body.appendChild(overlay);
+    document.getElementById('waSendBtn').onclick=function(){openWhats(a.phone,msg);_markWaSent(a,'confirmacao');_setWaStatus(a,'enviada','confirmacao');overlay.remove();};
+    document.getElementById('waCopyBtn').onclick=function(){navigator.clipboard?.writeText(msg);_setWaStatus(a,'copiada','confirmacao');alert('Mensagem copiada.');overlay.remove();};
+    document.getElementById('waLaterBtn').onclick=function(){overlay.remove();};
+  }
+
   const oldSaveAg=window.saveAg;
   if(typeof oldSaveAg==='function'&&!oldSaveAg._waConfirm){
     window.saveAg=function(i){
@@ -739,11 +763,7 @@ document.addEventListener('click',function(e){
       const msg=`Olá ${_whatsName(a)}, seu horário ficou agendado para ${brDate(a.date)} às ${a.time}.
 Serviço: ${_serviceText(a)}.
 Domingos Barbearia.`;
-      const choice=prompt('Enviar mensagem de confirmação pelo WhatsApp?
-Digite: enviar, copiar ou nao','enviar');
-      if(!choice||choice.toLowerCase().startsWith('nao'))return;
-      if(choice.toLowerCase().startsWith('cop')){copyText(msg);return;}
-      openWhats(a.phone,msg); _markWaSent(a,'confirmacao');
+      showWaConfirmDialog(a,msg);
     }
     window.saveAg._waConfirm=true;
   }
