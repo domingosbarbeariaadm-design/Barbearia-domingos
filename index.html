@@ -63,7 +63,7 @@
 <section id="fidelidade" class="screen"><div class="card"><h2>Fidelidade</h2><p class="small">A cada 10 serviços válidos o sistema avisa benefício/corte grátis.</p></div><div id="loyaltyList"></div></section><section id="whatsapp" class="screen"><div class="grid2"><div class="card"><h2>Mensagens rápidas</h2><div id="whatsQuickList"></div></div><div class="card"><h2>Modelos</h2><div id="whatsModels"></div><button class="btn" onclick="edit('messages')">Editar mensagens</button></div></div></section>
 <section id="precificacao" class="screen"><div class="grid2"><div class="card"><h2>Auxiliar de Precificação</h2><div id="priceItems"></div><button class="btn light" onclick="addPriceItem()">+ Produto usado</button><div class="field"><label>Tempo em minutos</label><input id="prTempo" value="40"></div><div class="field"><label>Custo fixo proporcional</label><input id="prFixo" value="8"></div><div class="field"><label>Comissão %</label><input id="prComissao" value="0"></div><div class="field"><label>Margem desejada %</label><input id="prMargem" value="40"></div><button class="btn" onclick="calcPrice()">Calcular</button><div id="priceResult" class="card"></div></div><div class="card"><h2>Resumo</h2><p class="small">Calcula mínimo, ideal e premium com produtos usados, tempo, comissão, custo fixo e margem.</p></div></div></section>
 <section id="relatorios" class="screen"><div class="card"><h2>Relatórios por período</h2><div class="grid2"><div class="field"><label>Início</label><input id="reportStart" type="date" onchange="render()"></div><div class="field"><label>Fim</label><input id="reportEnd" type="date" onchange="render()"></div></div><button class="btn light" onclick="$('reportStart').value=today();$('reportEnd').value=today();render()">Hoje</button><button class="btn light" onclick="setReportDays(7)">7 dias</button><button class="btn light" onclick="setReportMonth()">Mês</button></div><div class="cards"><div class="card">Recebido no caixa<div id="rMes" class="big">R$ 0</div></div><div class="card">Ticket médio<div id="rTicket" class="big">R$ 0</div></div><div class="card">Comandas geradas<div id="rServs" class="big">0</div></div><div class="card">Produtos vendidos<div id="rProdutos" class="big">0</div></div><div class="card">Taxas<div id="rTaxas" class="big">R$ 0</div></div><div class="card">Uso interno<div id="rUsoInterno" class="big">R$ 0</div></div><div class="card">Líquido aprox.<div id="rLiquido" class="big">R$ 0</div></div></div><div class="grid2"><div class="card"><h2>Serviços mais vendidos</h2><div id="rTopServ"></div></div><div class="card"><h2>Clientes frequentes</h2><div id="rTopCli"></div></div></div></section><section id="impressao" class="screen printing"><div class="card"><h2>Impressão</h2><button class="btn" onclick="printReport()">Relatório financeiro</button><button class="btn light" onclick="edit('receipt')">Recibo</button><button class="btn light" onclick="printOpenReceivables()">Pendências</button><div id="printArea" class="printBox"></div></div></section>
-<section id="config" class="screen"><div class="card"><div class="list" onclick="edit('biz')"><b>🏪 Dados da barbearia</b><span>›</span></div><div class="list" onclick="edit('logo')"><b>🖼️ Logo / marca d'água</b><span>›</span></div><div class="list" onclick="edit('hours')"><b>⏰ Horários e dias fechados</b><span>›</span></div><div class="list" onclick="edit('messages')"><b>💬 Mensagens WhatsApp</b><span>›</span></div><div class="list" onclick="edit('financeConfig')"><b>💳 Taxas e descontos</b><span>›</span></div><div class="list" onclick="edit('user')"><b>👥 Login local</b><span>›</span></div><div class="list" onclick="edit('import')"><b>📥 Importação</b><span>›</span></div></div></section><section id="backup" class="screen"><div class="card"><h2>Backup compatível</h2><button class="btn" onclick="exportBackup()">Exportar backup</button><button class="btn light" onclick="document.getElementById('importFile').click()">Importar backup</button><input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)"></div></section>
+<section id="config" class="screen"><div class="card"><div class="list" onclick="edit('biz')"><b>🏪 Dados da barbearia</b><span>›</span></div><div class="list" onclick="edit('logo')"><b>🖼️ Logo / marca d'água</b><span>›</span></div><div class="list" onclick="edit('hours')"><b>⏰ Horários e dias fechados</b><span>›</span></div><div class="list" onclick="edit('messages')"><b>💬 Mensagens WhatsApp</b><span>›</span></div><div class="list" onclick="edit('financeConfig')"><b>💳 Taxas e descontos</b><span>›</span></div><div class="list" onclick="edit('user')"><b>👥 Login local</b><span>›</span></div><div class="list" onclick="edit('import')"><b>📥 Importação</b><span>›</span></div></div></section><section id="backup" class="screen"><div class="card"><h2>Backup compatível</h2><button class="btn" onclick="exportBackup()">Exportar backup</button><button class="btn light" onclick="document.getElementById('importFile').click()">Importar backup</button><button class="btn" onclick="uploadCloudState()">Enviar dados para nuvem</button><button class="btn light" onclick="downloadCloudState()">Baixar dados da nuvem</button><input type="file" id="importFile" style="display:none" accept=".json" onchange="importBackup(event)"></div></section>
 <section id="cadastros" class="screen">
   <div class="card">
     <h2>3. Cadastros</h2>
@@ -194,9 +194,9 @@
 </section>
 
 <section id="editor" class="screen"><div class="card"><button class="btn light" onclick="nav(last)">← Voltar</button><h2 id="editorTitle"></h2><div id="editorBody"></div></div></section>
-</div><div class="card"><h2>Segurança</h2><p class="small">Senha padrão inicial: 1234. Use para liberar alteração de lançamentos finalizados.</p><button class="btn" onclick="setSecurityPassword()">Alterar senha de segurança</button></div></main></div><script>
+</div><div class="card"><h2>Segurança</h2><p class="small">Senha padrão inicial: 1234. Use para liberar alteração de lançamentos finalizados.</p><button class="btn" onclick="setSecurityPassword()">Alterar senha de segurança</button></div></main></div><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
 let selectedClient=null;
-const KEY='domingos_v17_corrigido_faltantes';const OLD=['domingos_v16_correcao_uso_real','domingos_v15_escopo_completo','domingos_v14_corrigido','domingos_v13_final','domingos_v12_update','domingos_v11_corrigido_ok'];function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}function hours(){return{0:{open:false,start:'08:00',end:'12:00',lunch:'',lunchDuration:60},1:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},2:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},3:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},4:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},5:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},6:{open:true,start:'08:00',end:'18:00',lunch:'12:00',lunchDuration:60}}}function msgDefault(){return{birthday:'Olá {cliente}, feliz aniversário!',schedule:'Olá {cliente}, seu horário foi agendado para {data} às {hora}, para {servicos}.',confirm:'Olá {cliente}, confirmando seu horário: {data} às {hora}.',reminder:'Olá {cliente}, lembrando do seu horário às {hora}.',charge:'Olá {cliente}, consta em aberto {valor}. Pendências: {historico}',promo:'Olá {cliente}, temos novidades na Domingos Barbearia!'}}function seed(){return{biz:{name:'Domingos Barbearia',owner:'Eduardo Dudu',phone:'',cnpj:'',address:'',logo:'',hours:hours(),messages:msgDefault()},users:[{id:id(),name:'Eduardo Dudu',role:'Administrador + Barbeiro',pass:'1234'}],clients:[],services:[{id:id(),name:'Corte',value:45,duration:40,loyalty:true,color:'#f2c94c'},{id:id(),name:'Barba',value:40,duration:30,loyalty:false,color:'#4c8df2'},{id:id(),name:'Combo',value:80,duration:70,loyalty:true,color:'#35c26b'},{id:id(),name:'Sobrancelha',value:15,duration:15,loyalty:false,color:'#d73d49'},{id:id(),name:'Pezinho',value:10,duration:10,loyalty:false,color:'#8c5d10'}],products:[],appointments:[],cash:[],receivables:[],payables:[],plans:[],subs:[],sales:[],internalUses:[],discountTypes:[],paymentFees:{Pix:0,Dinheiro:0,Debito:1.99,Credito:3.99},blocks:[]}}function loadDB(){let r=localStorage.getItem(KEY);if(r)return JSON.parse(r);for(let k of OLD){let o=localStorage.getItem(k);if(o){let d=JSON.parse(o);localStorage.setItem(KEY,JSON.stringify(d));return d}}return null}let db=loadDB()||seed(),current='agenda',last='agenda',weekOff=0,recFilter='todos',payFilter='todos',planTemp=[],priceItems=[{name:'Produto/insumo',cost:3}];const $=x=>document.getElementById(x),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),today=()=>new Date().toISOString().slice(0,10),num=v=>Number(String(v||0).replace(',','.'));function brDate(d){if(!d)return '';let p=String(d).split('-');return p.length==3?p[2]+'/'+p[1]+'/'+p[0]:d}function servicesText(a){return a&&a.service?a.service:'serviço agendado'}
+const KEY='domingos_v17_corrigido_faltantes';const SUPABASE_URL=window.SUPABASE_URL||'';const SUPABASE_ANON_KEY=window.SUPABASE_ANON_KEY||'';const SUPABASE_STATE_ID='domingos_barbearia';let supabaseClient=null;const OLD=['domingos_v16_correcao_uso_real','domingos_v15_escopo_completo','domingos_v14_corrigido','domingos_v13_final','domingos_v12_update','domingos_v11_corrigido_ok'];function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2)}function hours(){return{0:{open:false,start:'08:00',end:'12:00',lunch:'',lunchDuration:60},1:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},2:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},3:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},4:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},5:{open:true,start:'08:00',end:'20:00',lunch:'12:00',lunchDuration:60},6:{open:true,start:'08:00',end:'18:00',lunch:'12:00',lunchDuration:60}}}function msgDefault(){return{birthday:'Olá {cliente}, feliz aniversário!',schedule:'Olá {cliente}, seu horário foi agendado para {data} às {hora}, para {servicos}.',confirm:'Olá {cliente}, confirmando seu horário: {data} às {hora}.',reminder:'Olá {cliente}, lembrando do seu horário às {hora}.',charge:'Olá {cliente}, consta em aberto {valor}. Pendências: {historico}',promo:'Olá {cliente}, temos novidades na Domingos Barbearia!'}}function seed(){return{biz:{name:'Domingos Barbearia',owner:'Eduardo Dudu',phone:'',cnpj:'',address:'',logo:'',hours:hours(),messages:msgDefault()},users:[{id:id(),name:'Eduardo Dudu',role:'Administrador + Barbeiro',pass:'1234'}],clients:[],services:[{id:id(),name:'Corte',value:45,duration:40,loyalty:true,color:'#f2c94c'},{id:id(),name:'Barba',value:40,duration:30,loyalty:false,color:'#4c8df2'},{id:id(),name:'Combo',value:80,duration:70,loyalty:true,color:'#35c26b'},{id:id(),name:'Sobrancelha',value:15,duration:15,loyalty:false,color:'#d73d49'},{id:id(),name:'Pezinho',value:10,duration:10,loyalty:false,color:'#8c5d10'}],products:[],appointments:[],cash:[],receivables:[],payables:[],plans:[],subs:[],sales:[],internalUses:[],discountTypes:[],paymentFees:{Pix:0,Dinheiro:0,Debito:1.99,Credito:3.99},blocks:[]}}function loadDB(){let r=localStorage.getItem(KEY);if(r)return JSON.parse(r);for(let k of OLD){let o=localStorage.getItem(k);if(o){let d=JSON.parse(o);localStorage.setItem(KEY,JSON.stringify(d));return d}}return null}let db=loadDB()||seed(),current='agenda',last='agenda',weekOff=0,recFilter='todos',payFilter='todos',planTemp=[],priceItems=[{name:'Produto/insumo',cost:3}];const $=x=>document.getElementById(x),money=v=>Number(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),today=()=>new Date().toISOString().slice(0,10),num=v=>Number(String(v||0).replace(',','.'));function brDate(d){if(!d)return '';let p=String(d).split('-');return p.length==3?p[2]+'/'+p[1]+'/'+p[0]:d}function servicesText(a){return a&&a.service?a.service:'serviço agendado'}
 function nextOrderNo(){let y=new Date().getFullYear();let nums=(db.orders||[]).map(o=>String(o.number||'')).filter(n=>n.startsWith('CMD-'+y+'-')).map(n=>Number(n.split('-').pop())).filter(Boolean);let n=(nums.length?Math.max(...nums):0)+1;return 'CMD-'+y+'-'+String(n).padStart(4,'0')}
 function orderItemsHtml(items){return (items||[]).map(i=>i.name+' x'+(i.qty||1)+' - '+money(i.total||i.value||0)).join(' • ')}
 function orderByNo(no){return (db.orders||[]).find(o=>o.number==no)}
@@ -408,234 +408,7 @@ function renderProductSalesList(){
 function inPeriodDate(date,start,end){if(!date)return false;return (!start||date>=start)&&(!end||date<=end)}
 function setReportDays(days){let d=new Date(today()+'T00:00:00');d.setDate(d.getDate()-Number(days||7)+1);$('reportStart').value=d.toISOString().slice(0,10);$('reportEnd').value=today();render()}
 function setReportMonth(){let m=today().slice(0,7);$('reportStart').value=m+'-01';$('reportEnd').value=today();render()}
-function render(){renderLogo();renderAgenda();renderPriceItems();let inT=db.cash.filter(c=>c.type=='entrada').reduce((s,c)=>s+Number(c.value),0),outT=db.cash.filter(c=>c.type=='saida').reduce((s,c)=>s+Number(c.value),0),cashToday=db.cash.filter(c=>c.date==today()).reduce((s,c)=>s+(c.type=='entrada'?Number(c.value):-Number(c.value)),0),recOpen=db.receivables.filter(r=>!r.paid).reduce((s,r)=>s+Number(r.value),0),venc=db.receivables.filter(r=>!r.paid&&r.due<today()).length+db.payables.filter(p=>p.status!='paga'&&p.due<today()).length;$('dAg').innerText=db.appointments.filter(a=>a.date==today()).length;$('dCx').innerText=money(cashToday);$('dRec').innerText=money(recOpen);$('dVenc').innerText=venc;$('homeList').innerHTML=db.appointments.filter(a=>a.date==today()).map(a=>`<div class="list"><div><b>${a.time} — ${_agendaName(a)}</b><div class="small">${a.service} • ${money(a.value)}</div></div><div><button class="btn light" onclick='edit("ag",${JSON.stringify(a)})'>Editar</button><button class="btn green" onclick="finish('${a.id}')">Finalizar</button><button class="btn red" onclick="deleteAppointment('${a.id}')">Excluir</button><button class="btn light" onclick="sendAbsent('${a.id}')">Faltou</button></div></div>`).join('')||'<p class="small">Nenhum atendimento hoje.</p>';$('alerts').innerHTML=(db.products.filter(p=>p.min&&Number(p.stock)<=Number(p.min)).map(p=>`<div class="list"><b>Estoque baixo: ${p.name}</b></div>`).join('')+db.clients.filter(c=>c.birth&&c.birth.slice(5)==today().slice(5)).map(c=>`<div class="list"><b>Aniversariante: ${c.name}</b><button class="btn light" onclick="sendBirthday('${c.id}')">WhatsApp</button></div>`).join('')+db.appointments.filter(a=>a.status=='faltou').map(a=>`<div class="list"><b>Cliente faltante: ${_agendaName(a)}</b><button class="btn light" onclick="sendAbsent('${a.id}')">WhatsApp</button></div>`).join(''))||'<p class="small">Sem alertas.</p>';let clientQ=val('clientSearch'),clientRows=db.clients.filter(c=>matchClient(c,clientQ));if($('clientInfo'))$('clientInfo').innerText=clientRows.length+' cliente(s) encontrado(s)';$('clientList').innerHTML=clientRows.map(c=>`<div class="list vertical"><div><b>${c.name}${c.nickname?' ('+c.nickname+')':''}</b><div class="small">${c.phone||''} • fidelidade ${c.loyalty||0}/${c.loyaltyGoal||10} • visitas ${c.visits||0} ${c.loyaltyOrigin=='cartao_fisico'?'• cartão físico':''}</div></div><div class="itemActions"><button class="btn light" onclick='edit("client",${JSON.stringify(c)})'>Abrir/Editar</button><button class="btn light" onclick="sendBirthday('${c.id}')">WhatsApp</button><button class="btn red" onclick="deleteClient('${c.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum cliente encontrado.</p>';let serviceQ=val('serviceSearch'),serviceRows=db.services.filter(s=>matchService(s,serviceQ));if($('serviceInfo'))$('serviceInfo').innerText=serviceRows.length+' serviço(s) encontrado(s)';$('serviceList').innerHTML=serviceRows.map(s=>`<div class="list vertical"><div><b>${s.name}</b><div class="small">${money(s.value)} • ${s.duration} min • ${s.loyalty?'fidelidade':'sem fidelidade'}</div></div><div class="itemActions"><button class="btn light" onclick='edit("service",${JSON.stringify(s)})'>Editar</button><button class="btn red" onclick="deleteService('${s.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum serviço encontrado.</p>';let productQ=val('productSearch'),productRows=db.products.filter(p=>matchProduct(p,productQ));if($('productInfo'))$('productInfo').innerText=productRows.length+' produto(s) encontrado(s)';$('productList').innerHTML=productRows.map(p=>`<div class="list vertical"><div><b>${p.name}</b><div class="small">${p.type||'ambos'} • custo ${money(p.cost)} • venda ${money(p.value)} • estoque ${p.stock}</div></div><div class="itemActions"><button class="btn light" onclick='edit("product",${JSON.stringify(p)})'>Editar</button><button class="btn red" onclick="deleteProduct('${p.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum produto encontrado.</p>';if($('internalUseList'))$('internalUseList').innerHTML=(db.internalUses||[]).slice().reverse().map(u=>`<div class="list"><div><b>${u.product}</b><div class="small">${brDate(u.date)} • qtd ${u.qty} • ${u.obs||''}</div></div><b>${money(u.cost)}</b></div>`).join('')||'<p class="small">Nenhum uso interno registrado.</p>';$('saleList').innerHTML=db.sales.map(s=>`<div class="list"><div><b>${s.product}</b><div class="small">${s.client||''} • ${brDate(s.date)} • qtd ${s.qty} • ${s.orderNo||''}</div></div><div><b>${money(s.total)}</b><button class="btn red" onclick="deleteProductSale('${s.id}')">Excluir</button></div></div>`).join('');$('planList').innerHTML=db.plans.map(p=>`<div class="list"><div><b>${p.name}</b><div class="small">${(p.items||[]).map(i=>i.serviceName+' x'+i.qty).join(' • ')} • ${p.days} dias</div></div><div><b>${money(p.value)}</b><button class="btn light" onclick='edit("plan",${JSON.stringify(p)})'>Alterar</button></div></div>`).join('');$('subList').innerHTML=db.subs.map(s=>`<div class="list"><div><b>${s.client}</b><div class="small">${s.plan} • vence ${s.end} • ${(s.items||[]).map(i=>i.serviceName+' saldo '+i.qty).join(' • ')}</div></div><b>${money(s.value)}</b></div>`).join('');$('saldo').innerText=money(inT-outT);$('entradas').innerText=money(inT);$('saidas').innerText=money(outT);$('lanc').innerText=db.cash.length;$('cashList').innerHTML=db.cash.map(c=>`<div class="list"><div><b>${c.desc}</b><div class="small">${brDate(c.date)} • ${c.type} • ${c.pay||''} ${c.fee?('• taxa '+money(c.fee)):''} ${c.locked?'• travado':''}</div></div><div><b>${money(c.value)}</b><button class="btn light" onclick='edit("cashEdit",${JSON.stringify(c)})'>Editar</button><button class="btn red" onclick="deleteCash('${c.id}')">Excluir</button></div></div>`).join('');renderReceivables();$('pagarList').innerHTML=db.payables.filter(payInFilter).map(p=>`<div class="list"><div><b>${p.desc}</b><div class="small">${p.supplier||''} • ${brDate(p.due)} • ${p.status}</div></div><div><b>${money(p.value)}</b><button class="btn green" onclick="markPayablePaid('${p.id}')">Paga</button><button class="btn red" onclick="deletePayable('${p.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhuma conta.</p>';$('loyaltyList').innerHTML=db.clients.map(c=>{let goal=Number(c.loyaltyGoal||10),pts=Number(c.loyalty||0),faltam=Math.max(0,goal-pts);return `<div class="card"><div class="list"><div><b>${c.name}</b><p class="small">Fidelidade ${pts}/${goal} • Faltam ${faltam} para benefício ${c.loyaltyOrigin=='cartao_fisico'?'• veio do cartão físico':''}</p><div style="height:10px;background:#222;border-radius:20px;overflow:hidden;margin-top:8px"><div style="height:100%;width:${Math.min(100,(pts/goal)*100)}%;background:var(--gold)"></div></div></div><div><button class="btn light" onclick="addLoyalty('${c.id}',1,'Ponto adicionado manualmente')">+1</button><button class="btn light" onclick="addLoyalty('${c.id}',-1,'Ponto removido manualmente')">-1</button><button class="btn light" onclick="setLoyalty('${c.id}')">Ajustar</button><button class="btn light" onclick="sendLoyalty('${c.id}')">WhatsApp</button></div></div></div>`}).join('');$('whatsQuickList').innerHTML=db.appointments.filter(a=>a.date>=today()).slice(0,30).map(a=>`<div class="list"><div><b>${_agendaName(a)}</b><div class="small">${brDate(a.date)} ${a.time} • ${a.service}</div></div><div><button class="btn light" onclick="sendSchedule('${a.id}')">Agendamento</button><button class="btn light" onclick="sendConfirm('${a.id}')">Confirmação</button></div></div>`).join('')||'<p class="small">Sem agendamentos futuros.</p>';let mm=db.biz.messages;$('whatsModels').innerHTML=Object.entries(mm).map(([k,v])=>`<p><b>${k}:</b></p><p class="small">${v}</p>`).join('');let rStart=$('reportStart')?.value||today().slice(0,7)+'-01',rEnd=$('reportEnd')?.value||today(),fin=db.appointments.filter(a=>a.status=='finalizado'&&inPeriodDate(a.date,rStart,rEnd)),periodCash=db.cash.filter(c=>inPeriodDate(c.date,rStart,rEnd)&&c.type=='entrada').reduce((s,c)=>s+Number(c.value),0),periodSales=db.sales.filter(x=>inPeriodDate(x.date,rStart,rEnd)),periodOrders=(db.orders||[]).filter(o=>inPeriodDate(o.date,rStart,rEnd));if($('reportStart')&&!$('reportStart').value)$('reportStart').value=rStart;if($('reportEnd')&&!$('reportEnd').value)$('reportEnd').value=rEnd;$('rMes').innerText=money(periodCash);$('rServs').innerText=periodOrders.length||fin.length;$('rProdutos').innerText=periodSales.reduce((s,x)=>s+Number(x.qty||0),0);let periodFees=db.cash.filter(c=>inPeriodDate(c.date,rStart,rEnd)&&c.category=='taxa_pagamento').reduce((s,c)=>s+Number(c.value||0),0),periodInternal=(db.internalUses||[]).filter(u=>inPeriodDate(u.date,rStart,rEnd)).reduce((s,u)=>s+Number(u.cost||0),0);if($('rTaxas'))$('rTaxas').innerText=money(periodFees);if($('rUsoInterno'))$('rUsoInterno').innerText=money(periodInternal);if($('rLiquido'))$('rLiquido').innerText=money(periodCash-periodFees-periodInternal);$('rTicket').innerText=money((periodOrders.length?periodOrders.length:fin.length)?periodCash/(periodOrders.length||fin.length):0);$('rTopServ').innerHTML=countBy(fin,'service').map(x=>`<div class="list"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')||'<p class="small">Sem serviços no período.</p>';$('rTopCli').innerHTML=countBy(fin,'client').map(x=>`<div class="list"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')||'<p class="small">Sem clientes no período.</p>'}function exportBackup(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_domingos_v17_'+today()+'.json';a.click()}function importBackup(e){let file=e.target.files[0];if(!file)return;let r=new FileReader();r.onload=()=>{db=JSON.parse(r.result);normalize();save();alert('Backup importado e adaptado para a V17.')};r.readAsText(file)}render();
-
-/* AJUSTE PESQUISA CLIENTE + WHATSAPP */
-function _db(){ return typeof db !== 'undefined' ? db : window.db; }
-function _txt(v){ return String(v||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); }
-function _clientDisplayName(c){ return (c&&(c.apelido||c.nick||c.nickname||'').trim()) || (c&&c.name) || (c&&c.nome) || ''; }
-function _clientSearchText(c){ return _txt([c.name,c.nome,c.apelido,c.nick,c.nickname,c.phone,c.telefone,c.cpf].filter(Boolean).join(' ')); }
-function _serviceText(a){ return (typeof servicesText==='function'?servicesText(a):(a.service||a.servico||'serviço agendado')); }
-function _brDate(d){ return (typeof brDate==='function'?brDate(d):String(d||'').split('-').reverse().join('/')); }
-function _today(){ return (typeof today==='function'?today():(new Date()).toISOString().slice(0,10)); }
-function _save(){ if(typeof save==='function') save(); else localStorage.setItem('db',JSON.stringify(db)); }
-function _getEl(ids){ for(const id of ids){let el=document.getElementById(id); if(el) return el;} return null; }
-
-function agendaClientResults(){
-  const data=_db(); if(!data||!data.clients)return;
-  const input=_getEl(['aClientSearch','clientSearch','buscaCliente','searchClient','eClientSearch','clienteBusca','appointmentClientSearch']);
-  const box=_getEl(['aClientResults','clientResults','listaClientes','searchClientResults','eClientResults','clienteResultados','appointmentClientResults']);
-  if(!input||!box)return;
-  const q=_txt(input.value);
-  if(!q){ box.innerHTML=''; box.style.display='none'; return; }
-  const found=data.clients.filter(c=>_clientSearchText(c).includes(q)).slice(0,25);
-  box.innerHTML = found.length ? found.map(c=>`
-    <div class="list client-result" style="cursor:pointer" onclick="selectAgendaClient('${c.id}')">
-      <b>${_clientDisplayName(c)}</b>
-      <span>${c.name||c.nome||''}${(c.phone||c.telefone)?' • '+(c.phone||c.telefone):''}</span>
-    </div>`).join('') : '<div class="list"><b>Nenhum cliente encontrado</b></div>';
-  box.style.display='block';
-}
-function selectAgendaClient(id){
-  const data=_db(); if(!data||!data.clients)return;
-  const c=data.clients.find(x=>String(x.id)===String(id)); if(!c)return;
-  selectedClient=c; window.selectedClient=c;
-  ['aClientId','clientId','eClient','appointmentClientId','clienteId'].forEach(k=>{let el=document.getElementById(k); if(el) el.value=c.id;});
-  ['aClientSearch','clientSearch','buscaCliente','searchClient','eClientSearch','clienteBusca','appointmentClientSearch'].forEach(k=>{let el=document.getElementById(k); if(el) el.value=_clientDisplayName(c);});
-  ['aClientResults','clientResults','listaClientes','searchClientResults','eClientResults','clienteResultados','appointmentClientResults'].forEach(k=>{let el=document.getElementById(k); if(el){el.innerHTML=''; el.style.display='none';}});
-  ['selectedClientBox','clienteSelecionadoBox','aSelectedClient','clienteSelecionado','selectedClient'].forEach(k=>{let el=document.getElementById(k); if(el){el.innerHTML=`<div class="selected"><div><small>Cliente selecionado</small><b>${_clientDisplayName(c)}</b><div class="small">${c.name||c.nome||''}${(c.phone||c.telefone)?' • '+(c.phone||c.telefone):''}</div></div></div>`; el.style.display='block';}});
-}
-function agendaClientOk(){
-  const data=_db(); if(!data||!data.clients)return;
-  const input=_getEl(['aClientSearch','clientSearch','buscaCliente','searchClient','eClientSearch','clienteBusca','appointmentClientSearch']);
-  if(!input)return;
-  const q=_txt(input.value);
-  const found=data.clients.filter(c=>_clientSearchText(c).includes(q));
-  if(found.length) selectAgendaClient(found[0].id); else alert('Nenhum cliente encontrado.');
-}
-
-function _appointmentDisplayName(a){ return _agendaName(a); }
-function _waKey(a,type='confirmacao'){ return type+'_'+a.id; }
-function _isWaSent(a,type='confirmacao'){ const data=_db(); data.whatsappSent=data.whatsappSent||[]; return data.whatsappSent.some(x=>x.key===_waKey(a,type)); }
-function _markWaSent(a,type='confirmacao'){ const data=_db(); data.whatsappSent=data.whatsappSent||[]; const key=_waKey(a,type); if(!data.whatsappSent.some(x=>x.key===key)) data.whatsappSent.push({key,appointmentId:a.id,type,date:_today(),time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}); _save(); renderWhatsAppList(); }
-function _unmarkWaSent(id,type='confirmacao'){ const data=_db(); const a=data.appointments.find(x=>String(x.id)===String(id)); if(!a)return; const key=_waKey(a,type); data.whatsappSent=(data.whatsappSent||[]).filter(x=>x.key!==key); _save(); renderWhatsAppList(); }
-function _waText(a){
-  return `Olá ${_whatsName(a)}, confirmando seu horário na Domingos Barbearia:
-
-${_serviceText(a)}
-${_brDate(a.date)} às ${a.time}.
-
-Atenciosamente,
-Domingos Barbearia`;
-}
-function openWhatsappAppointment(id){
-  const data=_db(); const a=data.appointments.find(x=>String(x.id)===String(id)); if(!a)return;
-  const phone=String(a.phone||a.telefone||'').replace(/\D/g,'');
-  const url=(phone?`https://wa.me/55${phone}?text=`:`https://wa.me/?text=`)+encodeURIComponent(_waText(a));
-  window.open(url,'_blank');
-  _markWaSent(a,'confirmacao');
-}
-function setWaDays(days){
-  let d=new Date(_today()+'T00:00:00'), e=new Date(_today()+'T00:00:00');
-  e.setDate(e.getDate()+Number(days||7)-1);
-  document.getElementById('waStart').value=d.toISOString().slice(0,10);
-  document.getElementById('waEnd').value=e.toISOString().slice(0,10);
-  renderWhatsAppList();
-}
-function _waDateTimeKey(a){let t=String(a.time||a.horario||'23:59');if(/^\d:\d\d/.test(t))t='0'+t;return String(a.date||a.data||'9999-12-31')+'T'+t.slice(0,5)}
-function renderWhatsAppList(){
-  const data=_db(); const box=document.getElementById('whatsappList'); if(!data||!box)return;
-  const st=(document.getElementById('waStart')?.value)||_today();
-  const en=(document.getElementById('waEnd')?.value)||_today();
-  if(document.getElementById('waStart')&&!document.getElementById('waStart').value)document.getElementById('waStart').value=st;
-  if(document.getElementById('waEnd')&&!document.getElementById('waEnd').value)document.getElementById('waEnd').value=en;
-  const list=(data.appointments||[]).filter(a=>(!a.status||!['cancelado','faltou','finalizado'].includes(String(a.status).toLowerCase()))&&(!st||a.date>=st)&&(!en||a.date<=en))
-    .sort((a,b)=>_waDateTimeKey(a).localeCompare(_waDateTimeKey(b)));
-  const dates={}; list.forEach(a=>{(dates[a.date]=dates[a.date]||[]).push(a);});
-  box.innerHTML=Object.keys(dates).sort().map(date=>`
-    <div class="card"><h3>${_brDate(date)}</h3>
-      ${dates[date].sort((a,b)=>_waDateTimeKey(a).localeCompare(_waDateTimeKey(b))).map(a=>{
-        const sent=_isWaSent(a,'confirmacao');
-        return `<div class="list ${sent?'locked':''}">
-          <b>${a.time||''} • ${_agendaName(a)}</b>
-          <span>${_serviceText(a)} • ${sent?'✅ Enviado':'Pendente'}<br>
-            <button class="btn" onclick="openWhatsappAppointment('${a.id}')">${sent?'Reenviar WhatsApp':'Enviar WhatsApp'}</button>
-            ${sent?`<button class="btn light" onclick="_unmarkWaSent('${a.id}','confirmacao')">Desmarcar enviado</button>`:''}
-          </span>
-        </div>`;
-      }).join('')}
-    </div>`).join('') || '<div class="card"><p class="small">Nenhum agendamento para envio nesse período.</p></div>';
-}
-document.addEventListener('input',function(e){
-  if(['aClientSearch','clientSearch','buscaCliente','searchClient','eClientSearch','clienteBusca','appointmentClientSearch'].includes(e.target.id)) agendaClientResults();
-});
-document.addEventListener('click',function(e){
-  if(e.target && e.target.matches('.client-result')) return;
-});
-
-
-/* AJUSTE NOME AGENDA + CARD EXPANDIDO */
-let expandedAppointmentId = null;
-function _clientFullName(c){return (c&&(c.name||c.nome))||''}
-function _clientNick(c){return (c&&(c.apelido||c.nick||c.nickname||'').trim())||''}
-function _agendaNameFromClient(c){
-  const nick=_clientNick(c), full=_clientFullName(c);
-  if(nick && full && _txt(nick)!==_txt(full)) return `${nick} (${full})`;
-  return nick || full;
-}
-function _agendaName(a){
-  const data=_db(); const c=data&&data.clients?data.clients.find(x=>String(x.id)===String(a.clientId)):null;
-  return _agendaNameFromClient(c) || a.client || a.cliente || '';
-}
-function _whatsName(a){
-  const data=_db(); const c=data&&data.clients?data.clients.find(x=>String(x.id)===String(a.clientId)):null;
-  return _clientNick(c) || _clientFullName(c) || a.client || a.cliente || '';
-}
-function toggleAppointmentActions(id){
-  expandedAppointmentId = String(expandedAppointmentId)===String(id) ? null : id;
-  if(typeof render==='function')render();
-}
-function quickDeleteAppointment(id){
-  if(!confirm('Excluir este agendamento?'))return;
-  const data=_db();
-  data.appointments=(data.appointments||[]).filter(a=>String(a.id)!==String(id));
-  _save();
-  if(typeof render==='function')render();
-}
-function quickMarkFaltou(id){
-  const data=_db(); const a=(data.appointments||[]).find(x=>String(x.id)===String(id)); if(!a)return;
-  a.status='faltou';
-  _save();
-  if(typeof render==='function')render();
-}
-function quickFinishAppointment(id){
-  if(typeof edit==='function') return edit('finish', id);
-  const data=_db(); const a=(data.appointments||[]).find(x=>String(x.id)===String(id)); if(!a)return;
-  a.status='finalizado';
-  _save();
-  if(typeof render==='function')render();
-}
-function appointmentActionPanel(a){
-  if(String(expandedAppointmentId)!==String(a.id))return '';
-  return `<div class="appointment-actions">
-    <button class="btn danger" onclick="event.stopPropagation();quickDeleteAppointment('${a.id}')">🗑️ Excluir</button>
-    <button class="btn light" onclick="event.stopPropagation();quickMarkFaltou('${a.id}')">⚠️ Faltou</button>
-    <button class="btn green" onclick="event.stopPropagation();quickFinishAppointment('${a.id}')">✅ Concluir</button>
-    <button class="btn" onclick="event.stopPropagation();openWhatsappAppointment('${a.id}')">💬 WhatsApp</button>
-  </div>`;
-}
-
-
-document.addEventListener('click',function(e){
-  const el=e.target.closest('[data-appointment-id]');
-  if(el && !e.target.closest('button')) toggleAppointmentActions(el.getAttribute('data-appointment-id'));
-});
-
-
-/* CORREÇÃO HORÁRIO FANTASMA AO TROCAR AGENDAMENTO */
-(function(){
-  function DB(){try{return window.db||db}catch(e){return null}}
-  function saveDB(){try{if(typeof save==='function')save()}catch(e){}}
-  function validClient(ap){
-    const d=DB(); if(!d||!ap)return false;
-    if(ap.clientId && (d.clients||[]).some(c=>String(c.id)===String(ap.clientId))) return true;
-    if(ap.client || ap.cliente) return true;
-    return false;
-  }
-  window.limparAgendamentosFantasmas=function(){
-    const d=DB(); if(!d||!d.appointments)return;
-    const before=d.appointments.length;
-    d.appointments=d.appointments.filter(a=>{
-      const status=String(a.status||'').toLowerCase();
-      if(status==='cancelado') return false;
-      if(!a.date && !a.data) return false;
-      if(!a.time && !a.horario) return false;
-      if(!validClient(a)) return false;
-      return true;
-    });
-    if(d.appointments.length!==before) saveDB();
-  };
-  function hookRender(){
-    const old=window.render;
-    if(typeof old==='function'&&!old._limpaFantasma){
-      window.render=function(){
-        limparAgendamentosFantasmas();
-        return old.apply(this,arguments);
-      };
-      window.render._limpaFantasma=true;
-    }
-  }
-  function patchConflict(){
-    if(typeof window.hasAppointmentConflict==='function'&&!window.hasAppointmentConflict._editFix){
-      const old=window.hasAppointmentConflict;
-      window.hasAppointmentConflict=function(date,time,dur,ignoreId){
-        // garante que edição do próprio agendamento não bloqueie o horário antigo
-        return old.call(this,date,time,dur,ignoreId);
-      };
-      window.hasAppointmentConflict._editFix=true;
-    }
-  }
-  function patchSaveEdit(){
-    // Se existir upsert, ele já deve substituir pelo mesmo ID.
-    // Esta limpeza remove qualquer duplicado/órfão que tenha ficado do horário antigo.
-    const oldSave=window.saveAg || window.saveAppointment || window.salvarAgendamento;
-    const name=window.saveAg?'saveAg':(window.saveAppointment?'saveAppointment':(window.salvarAgendamento?'salvarAgendamento':null));
-    if(name && typeof window[name]==='function'&&!window[name]._fantasmaFix){
-      const fn=window[name];
-      window[name]=function(){
-        const d=DB();
-        const beforeIds=d&&d.appointments?d.appointments.map(a=>a.id):[];
-        const result=fn.apply(this,arguments);
-        setTimeout(()=>{
-          const data=DB();
-          if(data&&data.appointments){
-            // remove duplicados por ID, mantendo o último salvo
-            const map=new Map();
-            data.appointments.forEach(a=>map.set(String(a.id),a));
-            data.appointments=[...map.values()];
-            limparAgendamentosFantasmas();
-            saveDB();
-            if(typeof render==='function')render();
+function render(){renderLogo();renderAgenda();renderPriceItems();let inT=db.cash.filter(c=>c.type=='entrada').reduce((s,c)=>s+Number(c.value),0),outT=db.cash.filter(c=>c.type=='saida').reduce((s,c)=>s+Number(c.value),0),cashToday=db.cash.filter(c=>c.date==today()).reduce((s,c)=>s+(c.type=='entrada'?Number(c.value):-Number(c.value)),0),recOpen=db.receivables.filter(r=>!r.paid).reduce((s,r)=>s+Number(r.value),0),venc=db.receivables.filter(r=>!r.paid&&r.due<today()).length+db.payables.filter(p=>p.status!='paga'&&p.due<today()).length;$('dAg').innerText=db.appointments.filter(a=>a.date==today()).length;$('dCx').innerText=money(cashToday);$('dRec').innerText=money(recOpen);$('dVenc').innerText=venc;$('homeList').innerHTML=db.appointments.filter(a=>a.date==today()).map(a=>`<div class="list"><div><b>${a.time} — ${_agendaName(a)}</b><div class="small">${a.service} • ${money(a.value)}</div></div><div><button class="btn light" onclick='edit("ag",${JSON.stringify(a)})'>Editar</button><button class="btn green" onclick="finish('${a.id}')">Finalizar</button><button class="btn red" onclick="deleteAppointment('${a.id}')">Excluir</button><button class="btn light" onclick="sendAbsent('${a.id}')">Faltou</button></div></div>`).join('')||'<p class="small">Nenhum atendimento hoje.</p>';$('alerts').innerHTML=(db.products.filter(p=>p.min&&Number(p.stock)<=Number(p.min)).map(p=>`<div class="list"><b>Estoque baixo: ${p.name}</b></div>`).join('')+db.clients.filter(c=>c.birth&&c.birth.slice(5)==today().slice(5)).map(c=>`<div class="list"><b>Aniversariante: ${c.name}</b><button class="btn light" onclick="sendBirthday('${c.id}')">WhatsApp</button></div>`).join('')+db.appointments.filter(a=>a.status=='faltou').map(a=>`<div class="list"><b>Cliente faltante: ${_agendaName(a)}</b><button class="btn light" onclick="sendAbsent('${a.id}')">WhatsApp</button></div>`).join(''))||'<p class="small">Sem alertas.</p>';let clientQ=val('clientSearch'),clientRows=db.clients.filter(c=>matchClient(c,clientQ));if($('clientInfo'))$('clientInfo').innerText=clientRows.length+' cliente(s) encontrado(s)';$('clientList').innerHTML=clientRows.map(c=>`<div class="list vertical"><div><b>${c.name}${c.nickname?' ('+c.nickname+')':''}</b><div class="small">${c.phone||''} • fidelidade ${c.loyalty||0}/${c.loyaltyGoal||10} • visitas ${c.visits||0} ${c.loyaltyOrigin=='cartao_fisico'?'• cartão físico':''}</div></div><div class="itemActions"><button class="btn light" onclick='edit("client",${JSON.stringify(c)})'>Abrir/Editar</button><button class="btn light" onclick="sendBirthday('${c.id}')">WhatsApp</button><button class="btn red" onclick="deleteClient('${c.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum cliente encontrado.</p>';let serviceQ=val('serviceSearch'),serviceRows=db.services.filter(s=>matchService(s,serviceQ));if($('serviceInfo'))$('serviceInfo').innerText=serviceRows.length+' serviço(s) encontrado(s)';$('serviceList').innerHTML=serviceRows.map(s=>`<div class="list vertical"><div><b>${s.name}</b><div class="small">${money(s.value)} • ${s.duration} min • ${s.loyalty?'fidelidade':'sem fidelidade'}</div></div><div class="itemActions"><button class="btn light" onclick='edit("service",${JSON.stringify(s)})'>Editar</button><button class="btn red" onclick="deleteService('${s.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum serviço encontrado.</p>';let productQ=val('productSearch'),productRows=db.products.filter(p=>matchProduct(p,productQ));if($('productInfo'))$('productInfo').innerText=productRows.length+' produto(s) encontrado(s)';$('productList').innerHTML=productRows.map(p=>`<div class="list vertical"><div><b>${p.name}</b><div class="small">${p.type||'ambos'} • custo ${money(p.cost)} • venda ${money(p.value)} • estoque ${p.stock}</div></div><div class="itemActions"><button class="btn light" onclick='edit("product",${JSON.stringify(p)})'>Editar</button><button class="btn red" onclick="deleteProduct('${p.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhum produto encontrado.</p>';if($('internalUseList'))$('internalUseList').innerHTML=(db.internalUses||[]).slice().reverse().map(u=>`<div class="list"><div><b>${u.product}</b><div class="small">${brDate(u.date)} • qtd ${u.qty} • ${u.obs||''}</div></div><b>${money(u.cost)}</b></div>`).join('')||'<p class="small">Nenhum uso interno registrado.</p>';$('saleList').innerHTML=db.sales.map(s=>`<div class="list"><div><b>${s.product}</b><div class="small">${s.client||''} • ${brDate(s.date)} • qtd ${s.qty} • ${s.orderNo||''}</div></div><div><b>${money(s.total)}</b><button class="btn red" onclick="deleteProductSale('${s.id}')">Excluir</button></div></div>`).join('');$('planList').innerHTML=db.plans.map(p=>`<div class="list"><div><b>${p.name}</b><div class="small">${(p.items||[]).map(i=>i.serviceName+' x'+i.qty).join(' • ')} • ${p.days} dias</div></div><div><b>${money(p.value)}</b><button class="btn light" onclick='edit("plan",${JSON.stringify(p)})'>Alterar</button></div></div>`).join('');$('subList').innerHTML=db.subs.map(s=>`<div class="list"><div><b>${s.client}</b><div class="small">${s.plan} • vence ${s.end} • ${(s.items||[]).map(i=>i.serviceName+' saldo '+i.qty).join(' • ')}</div></div><b>${money(s.value)}</b></div>`).join('');$('saldo').innerText=money(inT-outT);$('entradas').innerText=money(inT);$('saidas').innerText=money(outT);$('lanc').innerText=db.cash.length;$('cashList').innerHTML=db.cash.map(c=>`<div class="list"><div><b>${c.desc}</b><div class="small">${brDate(c.date)} • ${c.type} • ${c.pay||''} ${c.fee?('• taxa '+money(c.fee)):''} ${c.locked?'• travado':''}</div></div><div><b>${money(c.value)}</b><button class="btn light" onclick='edit("cashEdit",${JSON.stringify(c)})'>Editar</button><button class="btn red" onclick="deleteCash('${c.id}')">Excluir</button></div></div>`).join('');renderReceivables();$('pagarList').innerHTML=db.payables.filter(payInFilter).map(p=>`<div class="list"><div><b>${p.desc}</b><div class="small">${p.supplier||''} • ${brDate(p.due)} • ${p.status}</div></div><div><b>${money(p.value)}</b><button class="btn green" onclick="markPayablePaid('${p.id}')">Paga</button><button class="btn red" onclick="deletePayable('${p.id}')">Excluir</button></div></div>`).join('')||'<p class="small">Nenhuma conta.</p>';$('loyaltyList').innerHTML=db.clients.map(c=>{let goal=Number(c.loyaltyGoal||10),pts=Number(c.loyalty||0),faltam=Math.max(0,goal-pts);return `<div class="card"><div class="list"><div><b>${c.name}</b><p class="small">Fidelidade ${pts}/${goal} • Faltam ${faltam} para benefício ${c.loyaltyOrigin=='cartao_fisico'?'• veio do cartão físico':''}</p><div style="height:10px;background:#222;border-radius:20px;overflow:hidden;margin-top:8px"><div style="height:100%;width:${Math.min(100,(pts/goal)*100)}%;background:var(--gold)"></div></div></div><div><button class="btn light" onclick="addLoyalty('${c.id}',1,'Ponto adicionado manualmente')">+1</button><button class="btn light" onclick="addLoyalty('${c.id}',-1,'Ponto removido manualmente')">-1</button><button class="btn light" onclick="setLoyalty('${c.id}')">Ajustar</button><button class="btn light" onclick="sendLoyalty('${c.id}')">WhatsApp</button></div></div></div>`}).join('');$('whatsQuickList').innerHTML=db.appointments.filter(a=>a.date>=today()).slice(0,30).map(a=>`<div class="list"><div><b>${_agendaName(a)}</b><div class="small">${brDate(a.date)} ${a.time} • ${a.service}</div></div><div><button class="btn light" onclick="sendSchedule('${a.id}')">Agendamento</button><button class="btn light" onclick="sendConfirm('${a.id}')">Confirmação</button></div></div>`).join('')||'<p class="small">Sem agendamentos futuros.</p>';let mm=db.biz.messages;$('whatsModels').innerHTML=Object.entries(mm).map(([k,v])=>`<p><b>${k}:</b></p><p class="small">${v}</p>`).join('');let rStart=$('reportStart')?.value||today().slice(0,7)+'-01',rEnd=$('reportEnd')?.value||today(),fin=db.appointments.filter(a=>a.status=='finalizado'&&inPeriodDate(a.date,rStart,rEnd)),periodCash=db.cash.filter(c=>inPeriodDate(c.date,rStart,rEnd)&&c.type=='entrada').reduce((s,c)=>s+Number(c.value),0),periodSales=db.sales.filter(x=>inPeriodDate(x.date,rStart,rEnd)),periodOrders=(db.orders||[]).filter(o=>inPeriodDate(o.date,rStart,rEnd));if($('reportStart')&&!$('reportStart').value)$('reportStart').value=rStart;if($('reportEnd')&&!$('reportEnd').value)$('reportEnd').value=rEnd;$('rMes').innerText=money(periodCash);$('rServs').innerText=periodOrders.length||fin.length;$('rProdutos').innerText=periodSales.reduce((s,x)=>s+Number(x.qty||0),0);let periodFees=db.cash.filter(c=>inPeriodDate(c.date,rStart,rEnd)&&c.category=='taxa_pagamento').reduce((s,c)=>s+Number(c.value||0),0),periodInternal=(db.internalUses||[]).filter(u=>inPeriodDate(u.date,rStart,rEnd)).reduce((s,u)=>s+Number(u.cost||0),0);if($('rTaxas'))$('rTaxas').innerText=money(periodFees);if($('rUsoInterno'))$('rUsoInterno').innerText=money(periodInternal);if($('rLiquido'))$('rLiquido').innerText=money(periodCash-periodFees-periodInternal);$('rTicket').innerText=money((periodOrders.length?periodOrders.length:fin.length)?periodCash/(periodOrders.length||fin.length):0);$('rTopServ').innerHTML=countBy(fin,'service').map(x=>`<div class="list"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')||'<p class="small">Sem serviços no período.</p>';$('rTopCli').innerHTML=countBy(fin,'client').map(x=>`<div class="list"><b>${x[0]}</b><span>${x[1]}</span></div>`).join('')||'<p class="small">Sem clientes no período.</p>'}function initSupabase(){if(supabaseClient)return supabaseClient;if(!window.supabase||!SUPABASE_URL||!SUPABASE_ANON_KEY)return null;supabaseClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);return supabaseClient}function getAllLocalStorage(){let data={};for(let i=0;i<localStorage.length;i++){let k=localStorage.key(i);if(!k)continue;data[k]=localStorage.getItem(k)}return data}async function uploadCloudState(){try{let client=initSupabase();if(!client)throw new Error('Supabase não configurado. Defina SUPABASE_URL e SUPABASE_ANON_KEY.');let payload={id:SUPABASE_STATE_ID,data:getAllLocalStorage(),updated_at:new Date().toISOString()};let {error}=await client.from('app_state').upsert(payload,{onConflict:'id'});if(error)throw error;alert('Dados enviados com sucesso')}catch(err){alert(err?.message||String(err))}}async function downloadCloudState(){try{let client=initSupabase();if(!client)throw new Error('Supabase não configurado. Defina SUPABASE_URL e SUPABASE_ANON_KEY.');let {data,error}=await client.from('app_state').select('data').eq('id',SUPABASE_STATE_ID).single();if(error)throw error;let cloud=data&&data.data;if(!cloud||typeof cloud!=='object')throw new Error('Nenhum dado válido encontrado na nuvem.');Object.entries(cloud).forEach(([k,v])=>localStorage.setItem(k,v));let fresh=loadDB();if(fresh)db=fresh;normalize();render();alert('Dados baixados com sucesso')}catch(err){alert(err?.message||String(err))}}function exportBackup(){let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'});let a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='backup_domingos_v17_'+today()+'.json';a.click()}function importBackup(e){let file=e.target.files[0];if(!file)return;let r=new FileReader();r.onload=()=>{db=JSON.parse(r.result);normalize();save();alert('Backup importado e adaptado para a V17.')};r.readAsText(file)}render();
           }
         },80);
         return result;
